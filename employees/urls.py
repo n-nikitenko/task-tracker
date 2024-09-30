@@ -4,8 +4,9 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
 from employees.apps import EmployeesConfig
-from employees.views import EmployeeCreateApiView, EmployeeListApiView, EmployeeRetrieveApiView, EmployeeUpdateApiView, \
-    EmployeeDestroyApiView
+from employees.views import (EmployeeCreateApiView, EmployeeDestroyApiView,
+                             EmployeeListApiView, EmployeeRetrieveApiView,
+                             EmployeeUpdateApiView)
 
 app_name = EmployeesConfig.name
 
