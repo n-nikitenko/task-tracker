@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "task-tracker"
+version = "0.1.0"
+description = ""
+authors = ["nnikitenko <nnikitenko@aorti.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+django = "4.2"
+python-dotenv = "^1.0.1"
+djangorestframework = "^3.15.2"
+psycopg2-binary = "^2.9.9"
+drf-yasg = "^1.21.7"
+djangorestframework-simplejwt = "^5.3.1"
+
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+black = "^24.8.0"
+coverage = "^7.6.1"
+flake8 = "^7.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
