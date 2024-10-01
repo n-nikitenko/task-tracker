@@ -3,10 +3,11 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from employees.models import Employee
+from tasks.models import Task
 
 
 class EmployeeTestCase(APITestCase):
-    """Тестирует CRUD сотрудников"""
+    """Тестирует api сотрудников"""
 
     def setUp(self):
         self.employee = Employee.objects.create(
@@ -63,3 +64,17 @@ class EmployeeTestCase(APITestCase):
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Employee.objects.count(), 0)
+
+    def test_busy_employees_list(self):
+        self.client.force_authenticate(user=self.employee)
+        url = reverse("employees:busy_employees_list")
+        response = self.client.get(url)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), 0)
+        # после назначения задачи
+        Task.objects.create(title="Test task 1", performer=self.employee)
+        response = self.client.get(url)
+        data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(data), 1)

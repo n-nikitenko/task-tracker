@@ -6,6 +6,8 @@ class Employee(AbstractUser):
     """модель для сотрудника"""
 
     name = models.CharField(max_length=200, verbose_name="ФИО", blank=True, null=True)
+    first_name = None
+    last_name = None
     position = models.CharField(
         max_length=200,
         verbose_name="Должность",
@@ -13,6 +15,11 @@ class Employee(AbstractUser):
         null=True,
         help_text="Должность",
     )
+
+    def __str__(self):
+        if self.name is not None:
+            return f"{self.name}"
+        return f"{self.username}"
 
     class Meta:
         verbose_name = "Сотрудник"
