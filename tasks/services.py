@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from employees.services import get_least_busy_employee
 from tasks.models import Task
 
@@ -34,8 +32,7 @@ def get_important_tasks():
             ).count()
             ret_task["employee"] = (
                 employee
-                if employee_active_tasks_count - max_delta
-                <= least_busy_employee.active_tasks_count
+                if employee_active_tasks_count - max_delta <= least_busy_employee.active_tasks_count
                 else least_busy_employee
             )
         result.append(ret_task)

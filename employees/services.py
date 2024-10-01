@@ -1,5 +1,4 @@
-from django.db.models import Count, F, Min, Q, Sum
-from django.db.models.functions import Coalesce
+from django.db.models import Count, Q
 
 from employees.models import Employee
 
