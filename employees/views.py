@@ -35,6 +35,9 @@ class EmployeeListApiView(ListAPIView):
 
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
+    filterset_fields = ("username",)
+    search_fields = ("username", "name")
+    ordering_fields = ("username", "name")
 
 
 class EmployeeUpdateApiView(UpdateAPIView):
