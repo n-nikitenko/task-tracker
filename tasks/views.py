@@ -1,6 +1,7 @@
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -63,3 +64,12 @@ class TaskViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+    def perform_update(self, serializer):
+        # проверка, что в качестве родительской задачи указана другая задача
+        parent = serializer.validated_data.get("parent")
+        if parent and parent.id == self.get_object().id:
+            raise ValidationError(
+                "Нельзя в качестве родительской задачи указать эту же задачу"
+            )
+        super().perform_update(serializer)

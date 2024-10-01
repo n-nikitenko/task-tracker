@@ -1,9 +1,17 @@
+from django.utils import timezone
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from tasks.models import Task
 
 
 class TaskSerializer(serializers.ModelSerializer):
+
+    def validate_deadline(self, value):
+        if value < timezone.now():
+            raise ValidationError("Срок выполнения задачи не может быть в прошлом")
+        return value
+
     class Meta:
         model = Task
         fields = "__all__"
