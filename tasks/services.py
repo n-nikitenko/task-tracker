@@ -20,7 +20,6 @@ def get_important_tasks():
     max_delta = 2
     tasks = [task.parent for task in queryset.all()]
     least_busy_employee = get_least_busy_employee()
-    pprint(vars(least_busy_employee))
     result = []
     for task in tasks:
         ret_task = {
