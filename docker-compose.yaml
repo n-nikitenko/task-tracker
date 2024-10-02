@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:12.18-alpine
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    env_file:
+      - .env
+    expose:
+      - $POSTGRES_PORT
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "-c", "pg_isready -U $POSTGRES_USER" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      network: host
+    restart: on-failure
+    tty: true
+    ports:
+      - "8000:8000"
+    command: sh -c "poetry run python manage.py migrate &&  \
+      poetry run python manage.py loaddata --exclude auth.permission --exclude contenttypes ./fixtures/data.json \
+      && poetry run python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/code
