@@ -10,6 +10,7 @@ Dockerfile
 .gitignore
 docker-compose.yaml
 .dockerignore
+static/
 
 # Unit test / coverage reports
 htmlcov/
