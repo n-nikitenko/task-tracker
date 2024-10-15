@@ -25,9 +25,10 @@ services:
     tty: true
     ports:
       - "8000:8000"
-    command: sh -c "poetry run python manage.py migrate &&  \
-      poetry run python manage.py loaddata --exclude auth.permission --exclude contenttypes ./fixtures/data.json \
-      && poetry run python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "poetry run python manage.py migrate
+      &&  poetry run python manage.py collectstatic --noinput
+      && poetry run gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 3"
+
     depends_on:
       db:
         condition: service_healthy
