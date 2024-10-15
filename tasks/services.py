@@ -13,7 +13,13 @@ def get_important_tasks():
 
     Возвращает список объектов в формате: {Важная задача, Срок, ФИО сотрудника}.
     """
-    queryset = (Task.objects.annotate(started_children_count=Count(
-        "children__status", filter=Q(children__status=Task.STARTED)))
-                .filter(status=Task.CREATED, started_children_count__gte=1).all())
+    queryset = (
+        Task.objects.annotate(
+            started_children_count=Count(
+                "children__status", filter=Q(children__status=Task.STARTED)
+            )
+        )
+        .filter(status=Task.CREATED, started_children_count__gte=1)
+        .all()
+    )
     return queryset
