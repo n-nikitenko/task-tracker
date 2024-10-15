@@ -54,7 +54,6 @@ class TaskViewSet(ModelViewSet):
     @action(["GET"], url_path=r"important", url_name="important_tasks", detail=False)
     def important_tasks(self, request):
         """Список важных задач"""
-
         serializer = ImportantTaskSerializer(get_important_tasks(), many=True)
         return Response(serializer.data)
 
@@ -62,7 +61,7 @@ class TaskViewSet(ModelViewSet):
         serializer.save(author=self.request.user)
 
     def perform_update(self, serializer):
-        # проверка, что в качестве родительской задачи указана другая задача
+        """проверка, что в качестве родительской задачи указана другая задача"""
         parent = serializer.validated_data.get("parent")
         if parent and parent.id == self.get_object().id:
             raise ValidationError(

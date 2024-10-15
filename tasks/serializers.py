@@ -1,7 +1,9 @@
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.fields import SerializerMethodField
 
+from employees.services import get_least_busy_employee
 from tasks.models import Task
 
 
@@ -25,6 +27,25 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class ImportantTaskSerializer(serializers.Serializer):
-    task = TaskSerializer(read_only=True)
+    task = SerializerMethodField()
     deadline = serializers.DateTimeField(read_only=True)
-    employee = serializers.CharField(read_only=True)
+    employee = SerializerMethodField()
+
+    @staticmethod
+    def get_employee(task):
+        """ возвращает наименее загруженного сотрудника или сотрудника,
+        выполняющего родительскую задачу, если ему назначено максимум на 2 задачи больше,
+        чем у наименее загруженного сотрудника """
+
+        max_delta = 2
+        least_busy_employee = get_least_busy_employee()
+        if task.parent is not None and task.parent.performer is not None:
+            employee = task.parent.performer
+            employee_active_tasks_count = employee.tasks.filter(status__in=[Task.CREATED, Task.STARTED]).count()
+            if employee_active_tasks_count - max_delta <= least_busy_employee.active_tasks_count:
+                return str(employee)
+        return str(least_busy_employee)
+
+    @staticmethod
+    def get_task(task):
+        return TaskSerializer(task).data
