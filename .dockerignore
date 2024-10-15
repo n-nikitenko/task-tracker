@@ -8,7 +8,6 @@
 __pycache__
 Dockerfile
 .gitignore
-poetry.lock
 docker-compose.yaml
 .dockerignore
 

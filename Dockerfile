@@ -14,7 +14,7 @@ ENV PATH="${PATH}:${POETRY_VENV}/bin"
 
 WORKDIR /code
 
-COPY pyproject.toml ./
+COPY poetry.lock pyproject.toml ./
 
 RUN poetry install --no-interaction --no-ansi
 
