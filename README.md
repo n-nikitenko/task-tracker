@@ -43,3 +43,7 @@
         coverage run --source='.' manage.py test 
         coverage reportdoc
 ```
+## Заполнение БД
+```commandline
+    poetry run python manage.py loaddata --exclude auth.permission --exclude contenttypes ./fixtures/data.json 
+```
