@@ -1,4 +1,5 @@
-from employees.services import get_least_busy_employee
+from django.db.models import Count, Q
+
 from tasks.models import Task
 
 
@@ -12,28 +13,13 @@ def get_important_tasks():
 
     Возвращает список объектов в формате: {Важная задача, Срок, ФИО сотрудника}.
     """
-    queryset = Task.objects.exclude(parent__isnull=True).filter(
-        parent__status=Task.CREATED, status=Task.STARTED
-    )
-    max_delta = 2
-    tasks = [task.parent for task in queryset.all()]
-    least_busy_employee = get_least_busy_employee()
-    result = []
-    for task in tasks:
-        ret_task = {
-            "task": task,
-            "deadline": task.deadline,
-            "employee": least_busy_employee,
-        }
-        if task.parent is not None and task.parent.performer is not None:
-            employee = task.parent.performer
-            employee_active_tasks_count = employee.tasks.filter(
-                status__in=[Task.CREATED, Task.STARTED]
-            ).count()
-            ret_task["employee"] = (
-                employee
-                if employee_active_tasks_count - max_delta <= least_busy_employee.active_tasks_count
-                else least_busy_employee
+    queryset = (
+        Task.objects.annotate(
+            started_children_count=Count(
+                "children__status", filter=Q(children__status=Task.STARTED)
             )
-        result.append(ret_task)
-    return result
+        )
+        .filter(status=Task.CREATED, started_children_count__gte=1)
+        .all()
+    )
+    return queryset

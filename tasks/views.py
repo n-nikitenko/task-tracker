@@ -13,9 +13,11 @@ from tasks.services import get_important_tasks
 
 @method_decorator(
     name="list",
-    decorator=swagger_auto_schema(operation_description='Получение списка задач. \n'
-                                                        'ordering = created_at | performer | author | '
-                                                        'updated_at | status'),
+    decorator=swagger_auto_schema(
+        operation_description="Получение списка задач. \n"
+        "ordering = created_at | performer | author | "
+        "updated_at | status"
+    ),
 )
 @method_decorator(
     name="create",
@@ -39,22 +41,29 @@ from tasks.services import get_important_tasks
 )
 @method_decorator(
     name="important_tasks",
-    decorator=swagger_auto_schema(operation_description='Получение списка важных задач\n'
-                                                        'ordering = created_at | performer | author | '
-                                                        'updated_at | status'),
+    decorator=swagger_auto_schema(
+        operation_description="Получение списка важных задач\n"
+        "ordering = created_at | performer | author | "
+        "updated_at | status"
+    ),
 )
 class TaskViewSet(ModelViewSet):
     serializer_class = TaskSerializer
     pagination_class = TaskPaginator
     queryset = Task.objects.all()
     filterset_fields = ("performer__id",)
-    search_fields = ("title", "description", "status", "performer__username", "performer__name")
+    search_fields = (
+        "title",
+        "description",
+        "status",
+        "performer__username",
+        "performer__name",
+    )
     ordering_fields = ("created_at", "performer", "author", "updated_at", "status")
 
     @action(["GET"], url_path=r"important", url_name="important_tasks", detail=False)
     def important_tasks(self, request):
         """Список важных задач"""
-
         serializer = ImportantTaskSerializer(get_important_tasks(), many=True)
         return Response(serializer.data)
 
@@ -62,7 +71,7 @@ class TaskViewSet(ModelViewSet):
         serializer.save(author=self.request.user)
 
     def perform_update(self, serializer):
-        # проверка, что в качестве родительской задачи указана другая задача
+        """проверка, что в качестве родительской задачи указана другая задача"""
         parent = serializer.validated_data.get("parent")
         if parent and parent.id == self.get_object().id:
             raise ValidationError(
