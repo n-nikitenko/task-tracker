@@ -16,7 +16,7 @@ from tasks.services import get_important_tasks
     decorator=swagger_auto_schema(
         operation_description="Получение списка задач. \n"
         "ordering = created_at | performer | author | "
-        "updated_at | status"
+        "updated_at | status | parent | deadline"
     ),
 )
 @method_decorator(
@@ -44,14 +44,14 @@ from tasks.services import get_important_tasks
     decorator=swagger_auto_schema(
         operation_description="Получение списка важных задач\n"
         "ordering = created_at | performer | author | "
-        "updated_at | status"
+        "updated_at | status | parent | deadline"
     ),
 )
 class TaskViewSet(ModelViewSet):
     serializer_class = TaskSerializer
     pagination_class = TaskPaginator
     queryset = Task.objects.all()
-    filterset_fields = ("performer__id",)
+    filterset_fields = ("performer__id", "parent", "performer", "author")
     search_fields = (
         "title",
         "description",
@@ -59,7 +59,7 @@ class TaskViewSet(ModelViewSet):
         "performer__username",
         "performer__name",
     )
-    ordering_fields = ("created_at", "performer", "author", "updated_at", "status")
+    ordering_fields = ("created_at", "performer", "author", "updated_at", "status", "parent", "deadline")
 
     @action(["GET"], url_path=r"important", url_name="important_tasks", detail=False)
     def important_tasks(self, request):
