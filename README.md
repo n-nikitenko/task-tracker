@@ -58,7 +58,7 @@
 ## Проверка степени покрытия тестами (linux):
 ```commandline
         coverage run --source='.' manage.py test 
-        coverage reportdoc
+        coverage report
 ```
 ## Заполнение БД
 ```commandline
